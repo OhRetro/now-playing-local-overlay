@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Now Playing",
+  "version": "0.1.1",
+  "description": "Detects music playback and sends it to a local server so the HTML overlay read it and display on OBS",
+
+  "content_scripts": [
+    {
+      "matches": ["https://music.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "permissions": ["background"],
+
+  "host_permissions": [
+    "http://127.0.0.1:49210/*"
+  ]
+}
