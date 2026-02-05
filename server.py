@@ -12,7 +12,7 @@ app.add_middleware(
 )
 
 clients: List[WebSocket] = []
-current_track = None
+current_track = { "playing": False }
 
 @app.get("/")
 async def root():
@@ -39,6 +39,9 @@ async def websocket_endpoint(ws: WebSocket):
 @app.post("/update")
 async def update_track(data: dict):
     global current_track
+    
+    if data == current_track: return
+    
     current_track = data
 
     print("UPDATE RECEIVED:", data)

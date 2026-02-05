@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.type !== "NOW_PLAYING") return;
+  if (msg.type !== "NOW_PLAYING_LOCAL_OVERLAY") return;
 
   fetch("http://127.0.0.1:49210/update", {
     method: "POST",
