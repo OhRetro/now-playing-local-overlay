@@ -1,6 +1,9 @@
+from better_profanity import profanity
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
+
+profanity.load_censor_words()
 
 app = FastAPI()
 
@@ -21,8 +24,8 @@ async def root():
         "current_track": current_track
     }
     
-@app.websocket("/ws")
-async def websocket_endpoint(ws: WebSocket):
+@app.websocket("/receiveTrack")
+async def receive_track(ws: WebSocket):
     await ws.accept()
     clients.append(ws)
 
@@ -36,11 +39,20 @@ async def websocket_endpoint(ws: WebSocket):
         clients.remove(ws)
 
 
-@app.post("/update")
+@app.post("/updateTrack")
 async def update_track(data: dict):
     global current_track
     
-    if data == current_track: return
+    data = data.copy()
+
+    if "title" in data:
+        data["title"] = profanity.censor(data["title"])
+
+    if "artist" in data:
+        data["artist"] = profanity.censor(data["artist"])
+
+    if data == current_track:
+        return
     
     current_track = data
 

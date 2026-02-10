@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Now Playing Local Overlay",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Detects music playback and sends it to a local server so the HTML overlay read it and display on OBS",
 
   "content_scripts": [

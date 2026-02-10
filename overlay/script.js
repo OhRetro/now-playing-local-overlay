@@ -8,7 +8,7 @@ var lastId = "";
 var pendingTimeout = null;
 
 function connectToServer() {
-    socket = new WebSocket("ws://127.0.0.1:49210/ws");
+    socket = new WebSocket("ws://127.0.0.1:49210/receiveTrack");
 
     socket.onopen = () => {
         console.log("Connected to Local Server");
@@ -50,6 +50,9 @@ function connectToServer() {
     };
 
     socket.onclose = () => {
+        trackElement.classList.remove("visible");
+        lastId = "";
+
         console.warn("Disconnected, retrying...");
         pendingTimeout = setTimeout(connectToServer, 1000);
     };
