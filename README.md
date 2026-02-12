@@ -6,7 +6,7 @@ Detects music playback and sends it to a local server so the HTML overlay read i
 
 ## How to use it
 To make this work we'll need a way to read and send the track that is playing,  
-using a extension, to send to a server, so the `overlay.html` comunicate with the server to get the track info and display it.
+using a extension, to send to a server, so the overlay page can comunicate with the server to get the track info and display it.
 
 ### Loading the "unpacked" extension in the browser
 In your browser go to `chrome://extensions/` and activate "Developer mode",  
