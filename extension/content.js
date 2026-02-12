@@ -1,50 +1,48 @@
-var lastPayload = null;
+var lastTrack = null;
 
 function resetState() {
-  if (!lastPayload) return;
+  if (!lastTrack) return;
 
-  lastPayload = null;
+  lastTrack = null;
 
   chrome.runtime.sendMessage({
-    type: "NOW_PLAYING_LOCAL_OVERLAY",
-    payload: { playing: false }
+    type: "updateTrack",
+    track: null
   })
 }
 
-window.addEventListener("unload", resetState);
-
 setInterval(() => {
-  const video = document.querySelector("video");
   const meta = navigator.mediaSession?.metadata;
 
-  if (!video || !meta) {
-    if (lastPayload) resetState();
-
+  if (!meta) {
+    if (lastTrack) resetState();
     return;
   }
 
-  let payload = {
-    playing: !video.paused,
+  const metaPlaying = navigator.mediaSession?.playbackState === "playing"
+
+  let track = {
+    playing: metaPlaying,
     title: meta.title,
     artist: meta.artist,
-    artwork: meta.artwork?.[0]?.src ?? ""
+    artwork: meta.artwork?.at(-1)?.src ?? ""
   }
 
-  if (
-    !lastPayload ||
+  let changed = (
+    !lastTrack ||
     (
-      payload.playing !== lastPayload.playing ||
-      payload.title !== lastPayload.title ||
-      payload.artist !== lastPayload.artist
+      track.playing !== lastTrack.playing ||
+      track.title !== lastTrack.title ||
+      track.artist !== lastTrack.artist
     )
-  ) {
-    lastPayload = { ...payload };
-  } else {
-    return;
-  }
+  )
+
+  if (!changed) return;
+
+  lastTrack = { ...track };
 
   chrome.runtime.sendMessage({
-    type: "NOW_PLAYING_LOCAL_OVERLAY",
-    payload: payload
+    type: "updateTrack",
+    track: track
   });
-}, 100);
+}, 500);

@@ -1,5 +1,6 @@
 from better_profanity import profanity
 from fastapi import FastAPI, WebSocket
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
@@ -15,17 +16,43 @@ app.add_middleware(
 )
 
 clients: List[WebSocket] = []
-current_track = { "playing": False }
+current_track = None
 
-@app.get("/")
-async def root():
-    return {
-        "status": "ok",
-        "current_track": current_track
-    }
-    
+
+@app.post("/updateTrack")
+async def update_track_route(data: dict | None):
+    global current_track
+
+    if data == None:
+        current_track = data
+        return {"status": "ok"}
+
+    data = data.copy()
+
+    if "title" in data:
+        data["title"] = profanity.censor(data["title"])
+
+    if "artist" in data:
+        data["artist"] = profanity.censor(data["artist"])
+
+    if data == current_track:
+        return {"status": "unchanged"}
+
+    current_track = data
+
+    print("UPDATE RECEIVED:", data)
+
+    for ws in clients[:]:
+        try:
+            await ws.send_json(data)
+        except:
+            clients.remove(ws)
+
+    return {"status": "ok"}
+
+
 @app.websocket("/receiveTrack")
-async def receive_track(ws: WebSocket):
+async def receive_track_websocket(ws: WebSocket):
     await ws.accept()
     clients.append(ws)
 
@@ -39,29 +66,4 @@ async def receive_track(ws: WebSocket):
         clients.remove(ws)
 
 
-@app.post("/updateTrack")
-async def update_track(data: dict):
-    global current_track
-    
-    data = data.copy()
-
-    if "title" in data:
-        data["title"] = profanity.censor(data["title"])
-
-    if "artist" in data:
-        data["artist"] = profanity.censor(data["artist"])
-
-    if data == current_track:
-        return
-    
-    current_track = data
-
-    print("UPDATE RECEIVED:", data)
-
-    for ws in clients[:]:
-        try:
-            await ws.send_json(data)
-        except:
-            clients.remove(ws)
-
-    return {"status": "ok"}
+app.mount("/overlay", StaticFiles(directory="overlay", html=True), name="overlay")

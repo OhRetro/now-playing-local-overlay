@@ -1,22 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="style.css">
-  <title>Now Playing Local Overlay</title>
+  <title>"Now Playing" Local Overlay</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Jersey+10&display=swap");
+
+    .hide {
+      display: none !important;
+    }
+
+    #track {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.75);
+    }
+
+    #track.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #art {
+      width: 6rem;
+      height: 6rem;
+      border-radius: 6px;
+    }
+
+    #title {
+      color: white;
+      font-size: 3.5rem;
+      font-weight: 400;
+    }
+
+    #artist {
+      color: gray;
+      font-size: 2.25rem;
+      font-weight: 200;
+    }
+
+    #title,
+    #artist {
+      font-family: "Jersey 10", monospace;
+      margin: 0;
+    }
+
+    #title-artist {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
 </head>
 
 <body>
   <div id="track">
     <img id="art" />
     <div id="title-artist">
-      <div id="title"></div>
-      <div id="artist"></div>
+      <h1 id="title"></h1>
+      <h2 id="artist"></h2>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    const noArt = urlParams.get("noArt") === "1";
+
+    const trackElement = document.getElementById("track");
+    const titleElement = document.getElementById("title");
+    const artistElement = document.getElementById("artist");
+    const artElement = document.getElementById("art");
+
+    if (noArt) artElement.classList.add("hide");
+
+    var socket;
+    var lastId = "";
+    var pendingTimeout = null;
+
+    function connectToServer() {
+      socket = new WebSocket("ws://127.0.0.1:49210/receiveTrack");
+
+      socket.onopen = () => {
+        console.log("Connected to Local Server");
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (!data || !data.playing) {
+          trackElement.classList.remove("visible");
+          lastId = "";
+
+          if (pendingTimeout) {
+            clearTimeout(pendingTimeout);
+            pendingTimeout = null;
+          }
+
+          return;
+        }
+
+        const id = `${data.title}-${data.artist}`;
+
+        if (id !== lastId) {
+          trackElement.classList.remove("visible");
+          lastId = id;
+
+          if (pendingTimeout) {
+            clearTimeout(pendingTimeout);
+            pendingTimeout = null;
+          }
+
+          setTimeout(() => {
+            titleElement.textContent = data.title;
+            artistElement.textContent = data.artist;
+            artElement.src = data.artwork;
+            trackElement.classList.add("visible");
+          }, 300);
+        }
+      };
+
+      socket.onclose = () => {
+        trackElement.classList.remove("visible");
+        lastId = "";
+
+        console.warn("Disconnected, retrying...");
+        pendingTimeout = setTimeout(connectToServer, 1000);
+      };
+    }
+
+    connectToServer();
+  </script>
 </body>
 
 </html>
