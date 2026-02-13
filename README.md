@@ -16,12 +16,12 @@ using a extension, to send to a server, so the overlay page can comunicate with 
 In your browser go to `chrome://extensions/` and activate "Developer mode",  
 after enabling it, 3 buttons will appear, click on the "Load unpacked" button,  
 a window will appear asking to select a folder, go to the project's folder and select the `extension` folder.  
-Now the extension is load and working and wanting for the server.
+Now the extension is loaded and wanting for the server.
 
 ### Server
 You'll need Python 3.12 installed, maybe later versions will work, and download the source code.  
-After installing Python and downloading the source code and extracted it, on the terminal (aka. cmd on windows)
-go to the path where the project is,  
+After installing Python and downloading the source code and extracted it, go to the terminal (aka. cmd on windows) and
+"cd" to where the path of the project is,  
 then execute `pip install -r requirements.txt`, after installing the packages just execute or double click `start.bat`.  
 
 ### Using the overlay on OBS
