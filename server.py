@@ -1,10 +1,10 @@
 import logging
-from better_profanity import profanity
+from typing import List, Dict
 from json import dumps as json_dumps
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Dict
+from better_profanity import profanity
 
 
 logger = logging.getLogger("uvicorn")

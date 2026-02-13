@@ -1,16 +1,16 @@
 # "Now Playing" Local Overlay
-Detects music playback and sends it to a local server so the HTML overlay read it and display on OBS
+Detects music playback in the browser, sends it to a local server, and displays it in an OBS browser source.
 
 - Chromium based browser only (Brave/Chrome/Edge/Opera)
 - Supported sites
-    - **Apple Music** *(theoretical)*
-    - **Spotify** *(also theoretical, don't want to create an account)*
+    - **Apple Music** *(untested)*
+    - **Spotify** *(untested, don't want to create an account)*
     - **Soundcloud**
     - **YT Music**
 
 ## How to use it
 To make this work we'll need a way to read and send the track that is playing,  
-using a extension, to send to a server, so the overlay page can comunicate with the server to get the track info and display it.
+using a extension, to send to a server, so the overlay page can communicate with the server to get the track info and display it.
 
 ### Loading the "unpacked" extension in the browser
 In your browser go to `chrome://extensions/` and activate "Developer mode",  
@@ -20,9 +20,9 @@ Now the extension is loaded and wanting for the server.
 
 ### Server
 You'll need Python 3.12 installed, maybe later versions will work, and download the source code.  
-After installing Python and downloading the source code and extracted it, go to the terminal (aka. cmd on windows) and
+After installing Python and downloading the source code and extracted it, go to the terminal (aka. cmd/powershell on windows) and
 "cd" to where the path of the project is,  
-then execute `pip install -r requirements.txt`, after installing the packages just execute or double click `start.bat`.  
+then execute `pip install -r requirements.txt`, after installing the packages just execute `main.py`.  
 
 ### Using the overlay on OBS
 Go to OBS and create a new Browser source, put `http://127.0.0.1:49210/overlay`, adjust the width depeding of your scene and click OK.  
