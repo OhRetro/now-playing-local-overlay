@@ -27,22 +27,42 @@
       transform: translateY(0);
     }
 
+    #track.rightSide {
+      flex-direction: row-reverse;
+      position: absolute;
+      right: 0;
+      margin-right: 0.5rem;
+    }
+
     #art {
       width: 6rem;
       height: 6rem;
       border-radius: 6px;
+      border: 3px solid #000000;
     }
 
     #title {
       color: white;
       font-size: 3.5rem;
       font-weight: 400;
+      text-shadow:
+        -3px -3px 0 #000,
+        3px -3px 0 #000,
+        -3px 3px 0 #000,
+        3px 3px 0 #000;
+      padding-left: 3px;
     }
 
     #artist {
       color: gray;
       font-size: 2.25rem;
       font-weight: 200;
+      text-shadow:
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000;
+      padding-left: 3px;
     }
 
     #title,
@@ -52,9 +72,26 @@
     }
 
     #title-artist {
+      display: flex;
+      flex-direction: column;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    #title-artist.inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #track.rightSide>#title-artist {
+      text-align: right;
+      padding-left: 3px;
+    }
+
+    #track.rightSide>#title-artist.inline {
+      flex-direction: row-reverse;
     }
   </style>
 </head>
@@ -73,50 +110,48 @@
     const urlParams = new URLSearchParams(queryString);
 
     const noArt = urlParams.get("noArt") === "1";
+    const rightSide = urlParams.get("rightSide") === "1";
+    const inline = urlParams.get("inline") === "1";
 
     const trackElement = document.getElementById("track");
     const titleElement = document.getElementById("title");
     const artistElement = document.getElementById("artist");
+    const titleArtistElement = document.getElementById("title-artist");
     const artElement = document.getElementById("art");
 
     if (noArt) artElement.classList.add("hide");
+    if (rightSide) trackElement.classList.add("rightSide");
+    if (inline) titleArtistElement.classList.add("inline");
 
-    var socket;
     var lastId = "";
     var pendingTimeout = null;
+    var overlayClient;
 
-    function connectToServer() {
-      socket = new WebSocket("ws://127.0.0.1:49210/receiveTrack");
+    function resetState(id) {
+      trackElement.classList.remove("visible");
+      lastId = id ?? "";
 
-      socket.onopen = () => {
-        console.log("Connected to Local Server");
-      };
+      if (pendingTimeout) {
+        clearTimeout(pendingTimeout);
+        pendingTimeout = null;
+      }
+    }
 
-      socket.onmessage = (event) => {
+    function connectOverlayClient() {
+      overlayClient = new WebSocket("ws://127.0.0.1:49210/overlayClient");
+
+      overlayClient.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
         if (!data || !data.playing) {
-          trackElement.classList.remove("visible");
-          lastId = "";
-
-          if (pendingTimeout) {
-            clearTimeout(pendingTimeout);
-            pendingTimeout = null;
-          }
-
+          resetState(null);
           return;
         }
 
         const id = `${data.title}-${data.artist}`;
 
         if (id !== lastId) {
-          trackElement.classList.remove("visible");
-          lastId = id;
-
-          if (pendingTimeout) {
-            clearTimeout(pendingTimeout);
-            pendingTimeout = null;
-          }
+          resetState(id);
 
           setTimeout(() => {
             titleElement.textContent = data.title;
@@ -127,16 +162,15 @@
         }
       };
 
-      socket.onclose = () => {
-        trackElement.classList.remove("visible");
-        lastId = "";
+      overlayClient.onclose = () => {
+        resetState(null);
 
-        console.warn("Disconnected, retrying...");
-        pendingTimeout = setTimeout(connectToServer, 1000);
+        pendingTimeout = setTimeout(connectOverlayClient, 1000);
       };
     }
 
-    connectToServer();
+    connectOverlayClient();
+
   </script>
 </body>
 

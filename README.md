@@ -1,8 +1,12 @@
 # "Now Playing" Local Overlay
 Detects music playback and sends it to a local server so the HTML overlay read it and display on OBS
 
-- **YT Music** only
 - Chromium based browser only (Brave/Chrome/Edge/Opera)
+- Supported sites
+    - **Apple Music** *(theoretical)*
+    - **Spotify** *(also theoretical, don't want to create an account)*
+    - **Soundcloud**
+    - **YT Music**
 
 ## How to use it
 To make this work we'll need a way to read and send the track that is playing,  
@@ -27,11 +31,12 @@ There's params that customize the overlay such as:
 | Param | Description |
 |---|---|
 | **noArt** | Hide the art box|
+| **rightSide** | The track box appear on the right side|
+| **inline** | Make the title and artist text to be side by side|
 
 To use them, put as shown here: `http://127.0.0.1:49210/overlay/?noArt=1`  
+To use multiple of them, put as shown here: `http://127.0.0.1:49210/overlay/?noArt=1&rightSide=1`  
 
 ### Seeing it in action
 Hopefully after following the steps you can start playing music and your viewers will be able to see what music you're listening.  
 Just remember to close the server when not in use and start it again for streaming.
-
-At the moment only **YT Music** is supported.
