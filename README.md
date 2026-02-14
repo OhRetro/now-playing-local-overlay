@@ -4,9 +4,10 @@ Detects music playback in the browser, sends it to a local server, and displays 
 - Chromium based browser only (Brave/Chrome/Edge/Opera)
 - Supported sites (Web only)
     - **Apple Music** *(untested)*
-    - **Spotify** *(untested, don't want to create an account)*
     - **Soundcloud**
     - **YT Music**
+
+    - ~~**Spotify** *(untested)*~~ *(needs more work done for it)*
 
 ## How it works
 1. To make this work we'll need a way to read and send the track that is playing using an **Extension**;  
