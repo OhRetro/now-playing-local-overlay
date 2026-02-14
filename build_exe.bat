@@ -1,0 +1,2 @@
+pip install nuitka ordered-set zstandard
+nuitka main.py --standalone --onefile --output-dir=dist --remove-output --include-package-data=better_profanity --onefile-tempdir-spec="{TEMP}/NowPlayingLocalOverlay-Server" --include-windows-runtime-dlls=no
