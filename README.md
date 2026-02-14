@@ -1,5 +1,5 @@
 # "Now Playing" Local Overlay
-Detects music playback in the browser, sends it to a local server, and displays it in an OBS browser source.
+Detects music playback in the browser, sends it to a local server, and displays it in an page.
 
 - Chromium based browser only (Brave/Chrome/Edge/Opera)
 - Supported sites (Web only)
@@ -38,8 +38,8 @@ After enabling it, click on the "Load unpacked" button;
 A window will appear asking to select a folder, go to the extracted source code directory and select the `extension` folder;  
 Now the extension is installed and wanting for the server.
 
-### Using the overlay on OBS
-Go to OBS and create a new Browser source, put `http://127.0.0.1:49210/overlay`, adjust the width depeding of your scene and click OK.  
+### Using the overlay
+Go to OBS, or other similar softwares, and create a new Browser source, put `http://127.0.0.1:49210/overlay`, adjust the width depeding of your scene and click OK.  
 
 There's params that customize the overlay such as:
 | Param | Description |
