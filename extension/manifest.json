@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "\"Now Playing\" Local Overlay",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Detects music playback in the browser, sends it to a local server, and displays it in an page.",
   "icons": {
     "16": "icon.png",

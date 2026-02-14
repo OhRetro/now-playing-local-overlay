@@ -1,5 +1,28 @@
 var lastTrack = null;
 
+function detectPlaying() {
+  switch (window.location.hostname) {
+    case "music.apple.com":
+      const appleMusicButton = document.querySelector(
+        "button.playback-play__play[aria-hidden=\"true\"]"
+      );
+      return appleMusicButton ? true : false;
+
+    case "open.spotify.com":
+      const spotifyButton = document.querySelector(
+        "button[data-testid=\"control-button-playpause\"]"
+      );
+
+      if (!spotifyButton) return;
+
+      const spotifyButtonLabel = spotifyButton.getAttribute("aria-label")?.toLowerCase();
+      return spotifyButtonLabel?.includes("pause");
+
+    default:
+      return navigator.mediaSession?.playbackState === "playing";
+  }
+}
+
 function updateTrack(track) {
   if (!chrome.runtime) return;
 
@@ -26,7 +49,7 @@ setInterval(() => {
     return;
   }
 
-  const metaPlaying = navigator.mediaSession?.playbackState === "playing"
+  const metaPlaying = detectPlaying();
 
   let currentTrack = {
     playing: metaPlaying,
