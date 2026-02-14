@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from better_profanity import profanity
 
+__version__ = "0.3.1"
 
 logger = logging.getLogger("uvicorn")
 
