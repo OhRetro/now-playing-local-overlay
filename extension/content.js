@@ -13,7 +13,7 @@ function detectPlaying() {
         "button[data-testid=\"control-button-playpause\"]"
       );
 
-      if (!spotifyButton) return;
+      if (!spotifyButton) return false;
 
       const spotifyButtonLabel = spotifyButton.getAttribute("aria-label")?.toLowerCase();
       return spotifyButtonLabel?.includes("pause");
@@ -49,10 +49,8 @@ setInterval(() => {
     return;
   }
 
-  const metaPlaying = detectPlaying();
-
   let currentTrack = {
-    playing: metaPlaying,
+    playing: detectPlaying(),
     title: meta.title,
     artist: meta.artist,
     artwork: meta.artwork?.at(-1)?.src ?? ""
